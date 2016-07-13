@@ -1,0 +1,14 @@
+- if(menu['children'].nil?)
+  li
+    a[href == eval(menu['url']) id="#{menu['id']}"]
+      i class=["fa", menu['icon'] ]
+      span == menu['title']
+- else
+  li.treeview
+    a[href="#" id="#{menu['id']}"]
+      i class=["fa", menu['icon']]
+      span == menu['title']
+      i.fa.fa-angle-left.pull-right
+    ul.treeview-menu
+      - menu['children'].each do |menu|
+        = render 'admin/layouts_partial/menu', :menu => menu

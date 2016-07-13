@@ -1,0 +1,8 @@
+/ 標題
+= content_for :page_header
+  | 門市簡介
+/ 次標題
+= content_for :sub_header
+  | 修改
+
+= render :partial => 'form', :locals => {:title => '修改'}

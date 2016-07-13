@@ -1,0 +1,84 @@
+= simple_form_for [:admin, @menu] do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_menus_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-6.col-lg-3
+          = f.input :caption
+        .col-xs-12.col-md-6.col-lg-3
+          = f.input :action
+        .col-xs-12.col-md-6.col-lg-3
+          = f.input :icon
+        .col-xs-12.col-md-6.col-lg-3
+          = f.input :seq
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 子選單
+        small
+          | 至多3階
+      .box-tools
+        = link_to_add_association '新增', f, :sub_menus, partial: 'menu_fields', class: "btn btn-success btn-sm", \
+        "data-association-insertion-node" => 'ol.sortable', "data-association-insertion-method" => :append
+    .box-body
+      ol.sortable
+        = f.simple_fields_for :sub_menus do |item|
+          = render 'menu_fields', :f => item
+
+
+coffee:
+
+  $('.sortable').nestedSortable
+    forcePlaceholderSize: true,
+    handle: 'div',
+    items: 'li',
+    toleranceElement: '> div',
+    tabSize: 20,
+    opacity: .6,
+    maxLevels: 3,
+    placeholder: 'placeholder',
+    excludeRoot: true,
+    change: (e) ->
+      console.log "change"
+
+    relocate: (e) ->
+      hiered = $('ol.sortable').nestedSortable('toArray');
+      m_id = $("input[id=menu_id]").val();
+      i = 0;
+      for item in hiered
+        if item.parent_id != null
+          parent_id = $("input[data-id*=f_#{item.parent_id}]").val();
+          $("input[data-parent-id*=f_#{item.id}]").val(parent_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        else
+          $("input[data-parent-id*=f_#{item.id}]").val(m_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        i++;
+
+css:
+  ol.sortable {
+    padding-left: 0px;
+  }
+  ol.sortable, ol.sortable ol {
+    list-style-type: none;
+  }
+  .sortable li div {
+    cursor: move;
+    margin-bottom: 1px;
+    /*padding: 3px;*/
+  }
+  .placeholder {
+    outline: 1px dashed #4183C4;
+  }
+  .nested-fields {
+    display: block;
+    padding: 2px;
+    border: 1px solid #cccccc;
+    border-left: 3px solid #ff7700;
+  }

@@ -1,0 +1,8 @@
+- m_id = r_id
+.nested-fields.col-xs-12.col-md-2.col-lg-2[id="f_new_pictures_ #{m_id}" style="height:96px"]
+  = f.input :id, as: :hidden, :input_html => { :data => {:id => "f_new_pictures_ #{m_id}"} }
+  = f.input :seq, as: :hidden, :input_html => { :data => {:seq => "f_new_pictures_ #{m_id}"} }
+  = f.input :asset, wrapper: :no_label, as: :image_preview
+  = link_to_remove_association "", f, { class: "fa fa-close btn-remove"}
+coffee:
+  initImageInput();

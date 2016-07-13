@@ -1,0 +1,77 @@
+= simple_form_for [:admin, @banner], html: { multipart: true } do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_banners_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-5.col-lg-5
+          = f.input :caption, input_html: { placeholder: "名稱" }
+        .col-xs-12.col-md-4.col-lg-4
+          = f.input :description, input_html: { placeholder: "說明" }
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :seq, input_html: { placeholder: "排序" }
+
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 廣告
+      .box-tools
+        = link_to_add_association '新增', f, :sub_banners, partial: 'picture_fields', class: "btn btn-info btn-sm", \
+        "data-association-insertion-node" => 'ol.sortable#sub_banners', "data-association-insertion-method" => :append
+    .box-body
+      ol.sortable#sub_banners
+        = f.simple_fields_for :sub_banners do |item|
+          = render 'picture_fields', :f => item
+
+
+coffee:
+
+  $('ol.sortable').sortable
+    connectWith: "ol.sortable",
+    start: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      ui.placeholder.height(ui.helper[0].scrollHeight);
+      ui.placeholder.width(ui.helper[0].scrollWidth);
+    stop: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      sorted = $(this).sortable('toArray');
+      i = 0;
+      for item in sorted
+        splited = item.split(" ");
+        id = if splited[0] == 'f_new_sub_banners_' then splited[1] else splited[0];
+        if (id != '')
+          $("input[data-seq*=#{id}]").val(i);
+        i++;
+      return
+
+  .disableSelection();
+
+  $('ol.sortable#sub_banners').on 'cocoon:after-insert', (e, insertedItem) ->
+    $(insertedItem[1]).modal()
+    return
+
+css:
+  ol.sortable {
+    padding-left: 0px;
+  }
+  ol.sortable, ol.sortable ol {
+    list-style-type: none;
+  }
+  .sortable li div {
+    cursor: move;
+    margin-bottom: 1px;
+    /*padding: 3px;*/
+  }
+  .placeholder {
+    outline: 1px dashed #4183C4;
+  }
+  .nested-fields {
+    padding: 2px;
+    border: 1px solid #cccccc;
+    border-left: 3px solid #ff7700;
+  }

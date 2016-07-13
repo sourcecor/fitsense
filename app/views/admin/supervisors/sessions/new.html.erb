@@ -1,0 +1,34 @@
+<style>
+  @media screen and (max-height: 575px){
+    #rc-imageselect, .g-recaptcha {
+      transform:scale(0.8);
+      -webkit-transform:scale(0.8);
+      transform-origin:0 0;
+      -webkit-transform-origin:0 0;
+    }
+  }
+</style>
+<p class="login-box-msg">登入</p>
+
+<%= simple_form_for resource, as: resource_name, url: session_path(resource_name)  do |f| %>
+  <%= f.input :email, wrapper: :bootstrap, autofocus: true, placeholder: "郵件地址", icon: "fa-envelope" %>
+  <%= f.input :password, wrapper: :bootstrap, placeholder: "密碼", icon: "fa-eye-slash" %>
+  <div class="row" style="margin-bottom: 5px">
+    <% if devise_mapping.rememberable? -%>
+      <div class="col-xs-8">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me, "記住我" %>
+      </div>
+    <% end -%>
+
+    <!-- /.col -->
+    <div class="col-xs-4">
+      <%= f.submit "登入", class: "btn btn-primary btn-block btn-flat" %>
+    </div>
+  </div>
+  <div class="text-yellow"> <%= flash[:recaptcha_error] %> </div>
+  <%= recaptcha_tags %>
+
+<% end %>
+
+<%= render "admin/supervisors/shared/links" %>

@@ -1,0 +1,19 @@
+/ 標題
+= content_for :page_header
+  | 管理者維護
+/ 次標題
+= content_for :sub_header
+  | 說明
+
+= extends "admin/layouts_partial/_box_grid" do
+  = content_for :tools do
+    - link_to('新增', new_admin_supervisor_path, class: 'btn btn-primary btn-sm',)
+  = content_for :body do
+    == grid(@supervisors_grid) do |g|
+      - g.column name: '姓名', attribute: 'nickname', filter: false
+      - g.column name: '帳號', attribute: 'email', filter: false
+      - g.column name: '最後登入', attribute: 'current_sign_in_at', filter: false
+      - g.column name: '操作' do | supervisor |
+        - content_tag(:div) do
+          - concat(link_to('修改', edit_admin_supervisor_path(supervisor), class: 'btn btn-default btn-xs', style: 'margin-right:5px'))
+          - concat(link_to('刪除', [:admin, supervisor] ,method: :delete, data: {confirm: '確定要刪除?'}, class: 'btn btn-danger btn-xs'))

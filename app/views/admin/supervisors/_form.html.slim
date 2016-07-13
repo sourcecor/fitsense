@@ -1,0 +1,19 @@
+= simple_form_for [:admin, @supervisor] do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_supervisors_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :nickname
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :email, as: :email
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :password, as: :password
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :password_confirmation, as: :password
+    /= content_for :footer

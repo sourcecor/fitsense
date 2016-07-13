@@ -1,0 +1,39 @@
+= simple_form_for [:admin, @group] do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+      = content_for :body do
+        .row
+          .col-xs-12.col-md-6.col-lg-4
+            = f.input :caption
+
+        = content_for :tools do
+          = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+          = link_to( '取消', admin_groups_path, class: "btn btn-warning btn-sm")
+
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 群組成員
+    .box-body
+      = hidden_field_tag "group[supervisor_ids][]", nil
+      - group_id = @group.new_record? ? 0 : @group.id
+      - Supervisor.all.where( "id not in(select supervisor_id from groups_supervisors) or id in (select supervisor_id from groups_supervisors where group_id=#{group_id})" ).all.each do |user|
+        = render 'supervisor_fields', f: user
+
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 群組選單
+    .box-body
+      = hidden_field_tag "group[menu_ids][]", nil
+      - Menu.where(parent_id: 0).order(:seq).each do |menu|
+        .box.box-info
+          .box-body
+            = render 'menu_fields', f: menu
+
+coffee:
+  $('input').iCheck
+    checkboxClass: 'icheckbox_square-blue'
+    radioClass: 'iradio_square-blue'
+    increaseArea: '20%'

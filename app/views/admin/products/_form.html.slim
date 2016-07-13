@@ -1,0 +1,159 @@
+= simple_form_for [:admin, @product], html: { multipart: true } do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_products_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :caption, input_html: { placeholder: "品名" }
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :sub_caption, input_html: {placeholder: "副標"}
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :itemcode, input_html: { placeholder: "貨號" }
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :unit_price, input_html: { placeholder: "單價", min: 0 }
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :sale_price, input_html: { placeholder: "售價", min: 0 }
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :cost, input_html: { placeholder: "成本", min: 0 }
+        .col-xs-12.col-md-12.col-lg-12
+          = f.association :categories, collection: cate_group, as: :grouped_select, \
+            :group_method => :last, :group_label_method => :first, input_html: { multiple: true }
+  .box.collapsed-box
+    .box-header.with-border
+      h3.box-title
+        | 側寫照
+      .box-tools
+        = link_to_add_association '新增', f, :profiles, partial: 'picture_fields', class: "btn btn-success btn-sm", \
+            "data-association-insertion-node" => '.row.sortable#profile_picture', "data-association-insertion-method" => :append
+        button.btn.btn-box-tool[data-widget="collapse"]
+          i.fa.fa-plus
+    .box-body
+      .col-xs-12.col-md-12.col-lg-12.row.sortable#profile_picture
+        = f.simple_fields_for :profiles do |profile|
+          = render 'picture_fields', :f => profile
+
+  .nav-tabs-custom
+    ul.nav.nav-tabs.pull-right
+      li
+        a.btn.btn-default.btn-sm[data-toggle="collapse" data-target="#product_info"]
+          i.fa.fa-angle-double-down
+      li.active
+        a[href="#item-brief" data-toggle="tab" aria-expanded="false"] 介紹
+      li
+        a[href="#item-spec" data-toggle="tab" aria-expanded="false"] 規格
+      li
+        a[href="#item-size" data-toggle="tab" aria-expanded="true"] 尺寸
+
+      li.pull-left.header
+        i.fa.fa-info
+        ' 商品資訊
+
+    .tab-content.no-padding.collapse#product_info
+      .tab-pane.active#item-brief
+        = f.input :brief, as: :ckeditor , wrapper: :bootstrap
+      .tab-pane#item-spec
+        = f.input :spec, as: :ckeditor, wrapper: :bootstrap
+      .tab-pane#item-size
+        = f.input :size_info, as: :ckeditor, wrapper: :bootstrap
+
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 子商品
+      .box-tools
+        = link_to_add_association '新增', f, :sub_product_colors, partial: 'color_fields', class: "btn btn-success btn-sm", \
+            "data-association-insertion-node" => '#sub_color_items', "data-association-insertion-method" => :append
+    .box-body
+      #sub_color_items
+        = f.simple_fields_for :sub_product_colors do |item|
+          = render 'color_fields', :f => item
+
+coffee:
+
+  $("#product_category_ids").select2
+    placeholder: "選擇分類",
+    allowClear: true
+
+  $('.row.sortable').sortable
+    connectWith: ".row.sortable",
+    start: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      ui.placeholder.height(ui.helper[0].scrollHeight);
+      ui.placeholder.width(ui.helper[0].scrollWidth);
+    stop: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      sorted = $(this).sortable('toArray');
+      i = 0;
+      p_data = [];
+      for item in sorted
+        splited = item.split(" ");
+        id = if splited[0] == 'f_new_profiles_' then splited[1] else splited[0];
+        if (id != '')
+          $("input[data-seq*=#{id}]").val(i);
+          p_data.push({id: parseInt($("input[data-id*=#{id}]").val()), seq: i})
+        i++;
+
+      $.ajax
+        type: "patch",
+        url: "/admin/pictures/update_sequence",
+        data: { data: p_data},
+        success: () ->
+          console.log "POST"
+
+  .disableSelection();
+
+
+  $('ol.sortable#sub_product_colors').nestedSortable
+    forcePlaceholderSize: true,
+    handle: 'div',
+    items: 'li',
+    toleranceElement: '> div',
+    tabSize: 20,
+    opacity: .6,
+    maxLevels: 3,
+    placeholder: 'placeholder',
+    excludeRoot: true,
+    change: (e) ->
+      console.log "change"
+
+    relocate: (e) ->
+      hiered = $('ol.sortable').nestedSortable('toArray');
+      m_id = $("input[id=product_id]").val();
+      i = 0;
+      for item in hiered
+        if item.parent_id != null
+          parent_id = $("input[data-id*=f_#{item.parent_id}]").val();
+          $("input[data-parent-id*=f_#{item.id}]").val(parent_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        else
+          $("input[data-parent-id*=f_#{item.id}]").val(m_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        i++;
+
+css:
+
+  ol.sortable {
+    padding-left: 0px;
+  }
+  ol.sortable, ol.sortable ol {
+    list-style-type: none;
+  }
+  .sortable li div {
+    cursor: move;
+    margin-bottom: 1px;
+    /*padding: 3px;*/
+  }
+  .placeholder {
+    outline: 1px dashed #4183C4;
+  }
+  .nested-fields {
+    padding: 2px;
+    border: 1px solid #cccccc;
+    border-left: 3px solid #ff7700;
+  }

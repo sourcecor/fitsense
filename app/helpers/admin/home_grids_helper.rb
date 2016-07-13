@@ -1,0 +1,2 @@
+module Admin::HomeGridsHelper
+end

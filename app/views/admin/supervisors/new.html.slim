@@ -1,0 +1,8 @@
+/ 標題
+= content_for :page_header
+  | 管理者
+/ 次標題
+= content_for :sub_header
+  | 新增
+
+= render :partial => 'form', :locals => {:title => '修改'}

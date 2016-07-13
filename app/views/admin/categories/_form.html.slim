@@ -1,0 +1,125 @@
+= simple_form_for [:admin, @category], html: { multipart: true } do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_categories_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-4.col-lg-4
+          = f.input :caption, input_html: { placeholder: "類別名稱" }
+        .col-xs-12.col-md-4.col-lg-4
+          = f.input :description, input_html: { placeholder: "說明" }
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :seq, input_html: { placeholder: "排序" }
+        .col-xs-12.col-md-1.col-lg-1
+          a.btn.btn-default.btn-sm[style= 'margin-top: 2px' data-toggle="collapse" data-target="#main_picture"] 圖片
+      .row.collapse#main_picture
+        .col-xs-12.col-md-12.col-lg-12
+          .box
+            .box-header.with-border
+              h3.box-title
+                | 圖片
+              .box-tools
+                = link_to_add_association '新增', f, :pictures, partial: 'picture_fields', class: "btn btn-success btn-sm", \
+                    "data-association-insertion-node" => '.row.sortable#main_picture', "data-association-insertion-method" => :append
+            .box-body
+              .col-xs-12.col-md-12.col-lg-12.row.sortable#main_picture
+                = f.simple_fields_for :pictures do |picture|
+                  = render 'picture_fields', :f => picture
+
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 子類別
+        small
+          | 至多3階
+      .box-tools
+        = link_to_add_association '新增', f, :sub_categories, partial: 'category_fields', class: "btn btn-info btn-sm", \
+        "data-association-insertion-node" => 'ol.sortable#sub_categories', "data-association-insertion-method" => :append
+    .box-body
+      ol.sortable#sub_categories
+        = f.simple_fields_for :sub_categories do |item|
+          = render 'category_fields', :f => item
+
+
+coffee:
+  $('.row.sortable').sortable
+    connectWith: ".row.sortable",
+    start: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      ui.placeholder.height(ui.helper[0].scrollHeight);
+      ui.placeholder.width(ui.helper[0].scrollWidth);
+    stop: (event, ui) ->
+      ui.item.toggleClass("placeholder");
+      sorted = $(this).sortable('toArray');
+      i = 0;
+      p_data = [];
+      for item in sorted
+        splited = item.split(" ");
+        id = if splited[0] == 'f_new_pictures_' then splited[1] else splited[0];
+        if (id != '')
+          $("input[data-seq*=#{id}]").val(i);
+          p_data.push({id: parseInt($("input[data-id*=#{id}]").val()), seq: i})
+        i++;
+
+      $.ajax
+        type: "patch",
+        url: "/admin/pictures/update_sequence",
+        data: { data: p_data},
+        success: () ->
+          console.log "POST"
+
+  .disableSelection();
+
+
+  $('ol.sortable#sub_categories').nestedSortable
+    forcePlaceholderSize: true,
+    handle: 'div',
+    items: 'li',
+    toleranceElement: '> div',
+    tabSize: 20,
+    opacity: .6,
+    maxLevels: 3,
+    placeholder: 'placeholder',
+    excludeRoot: true,
+    change: (e) ->
+      console.log "change"
+
+    relocate: (e) ->
+      hiered = $('ol.sortable').nestedSortable('toArray');
+      m_id = $("input[id=category_id]").val();
+      i = 0;
+      for item in hiered
+        if item.parent_id != null
+          parent_id = $("input[data-id*=f_#{item.parent_id}]").val();
+          $("input[data-parent-id*=f_#{item.id}]").val(parent_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        else
+          $("input[data-parent-id*=f_#{item.id}]").val(m_id);
+          $("input[data-seq*=f_#{item.id}]").val(i);
+        i++;
+
+css:
+  ol.sortable {
+    padding-left: 0px;
+  }
+  ol.sortable, ol.sortable ol {
+    list-style-type: none;
+  }
+  .sortable li div {
+    cursor: move;
+    margin-bottom: 1px;
+    /*padding: 3px;*/
+  }
+  .placeholder {
+    outline: 1px dashed #4183C4;
+  }
+  .nested-fields {
+    padding: 2px;
+    border: 1px solid #cccccc;
+    border-left: 3px solid #ff7700;
+  }

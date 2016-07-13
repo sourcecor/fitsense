@@ -1,0 +1,4 @@
+footer.main-footer
+  .pull-right.hidden-xs
+    = ENV['FOOTER_RIGHT'].html_safe.force_encoding("UTF-8")
+  = ENV['FOOTER_COPYRIGHT'].html_safe.force_encoding("UTF-8")

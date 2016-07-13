@@ -1,0 +1,19 @@
+- m_id = r_id
+li[id="f_new_sub_menus_ #{m_id}"]
+  .nested-fields
+    .row[style="padding-top:5px"]
+      span.fa.fa-arrows[style="padding:10px 0px 5px 20px; float:left"]
+      = f.input :id, as: :hidden, :input_html => { :data => {:id => "f_new_sub_menus_ #{m_id}"} }
+      = f.input :parent_id, as: :hidden, :input_html => { :data => {:parent_id => "f_new_sub_menus_ #{m_id}"} }
+      = f.input :seq, as: :hidden, :input_html => { :data => {:seq => "f_new_sub_menus_ #{m_id}"} }
+      .col-xs-12.col-md-3.col-lg-3
+        = f.input :caption
+      .col-xs-12.col-md-4.col-lg-4
+        = f.input :action
+      .col-xs-12.col-md-3.col-lg-3
+        = f.input :icon
+      .col-xs-12.col-md-1.col-lg-1
+        = link_to_remove_association "移除", f, { data: {confirm: '要刪除嗎?'}, class: 'btn btn-danger btn-sm', style: 'margin-top: 2px' }
+  = f.simple_fields_for :sub_menus do |item|
+    ol
+      = render 'menu_fields', :f => item

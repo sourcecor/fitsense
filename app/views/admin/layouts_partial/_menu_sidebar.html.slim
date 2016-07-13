@@ -1,0 +1,26 @@
+ul.sidebar-menu
+  li.header 功能選單
+  /! Optionally, you can add icons to the links
+  /- menus = sidebarMenu Menu.where(parent_id: 0)
+  - menus = sidebarMenu current_admin_supervisor.groups.first.menus.where(parent_id: 0).order(:seq)
+  - menus.each do |menu|
+    = render 'admin/layouts_partial/menu', :menu => menu
+
+  /li.active
+  /  a href="#"
+  /    i class=["fa","fa-link"]
+  /    span Link
+  /li
+  /  a href="#"
+  /    i class=["fa","fa-link"]
+  /    span Another Link
+  /li.treeview
+  /  a href="#"
+  /    i class=["fa","fa-link"]
+  /    span Multilevel
+  /    i class=["fa","fa-angle-left","pull-right"]
+  /  ul.treeview-menu
+  /    li
+  /      a href="#" Link in level 2
+  /    li
+  /      a href="#" Link in level 20

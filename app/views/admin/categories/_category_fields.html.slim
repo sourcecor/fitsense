@@ -1,0 +1,31 @@
+- m_id = r_id
+li[id="f_new_sub_categories_ #{m_id}"]
+  .nested-fields
+    .row[style="padding-top:5px"]
+      span.fa.fa-arrows[style="padding:10px 0px 5px 20px; float:left"]
+      = f.input :id, as: :hidden, :input_html => { :data => {:id => "f_new_sub_categories_ #{m_id}"} }
+      = f.input :parent_id, as: :hidden, :input_html => { :data => {:parent_id => "f_new_sub_categories_ #{m_id}"} }
+      = f.input :seq, as: :hidden, :input_html => { :data => {:seq => "f_new_sub_categories_ #{m_id}"} }
+      .col-xs-12.col-md-5.col-lg-5
+        = f.input :caption
+      .col-xs-12.col-md-3.col-lg-4
+        = f.input :description
+      .col-xs-12.col-md-3.col-lg-2
+        = link_to_remove_association "移除", f, { data: {confirm: '要刪除嗎?'}, class: 'btn btn-danger btn-sm', style: 'margin-top: 2px; margin-right:2px' }
+        a.btn.btn-default.btn-sm[style= 'margin-top: 2px' data-toggle="collapse" data-target="#f_new_sub_categories_#{m_id}"] 圖片
+    .row.collapse[id="f_new_sub_categories_#{m_id}" ]
+      .col-xs-12.col-md-12.col-lg-12
+        .box
+          .box-header.with-border
+            h3.box-title
+              | 圖片
+            .box-tools
+              = link_to_add_association '新增', f, :pictures, partial: 'picture_fields', class: "btn btn-success btn-sm", \
+                      "data-association-insertion-node" => ".row.sortable#f_new_sub_categories_#{m_id}", "data-association-insertion-method" => :append
+          .box-body
+            .col-xs-12.col-md-12.col-lg-12.row.sortable[id="f_new_sub_categories_#{m_id}" ]
+              = f.simple_fields_for :pictures do |picture|
+                = render 'picture_fields', :f => picture
+  = f.simple_fields_for :sub_categories do |item|
+    ol
+      = render 'category_fields', :f => item

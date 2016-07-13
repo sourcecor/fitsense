@@ -1,0 +1,21 @@
+- m_id = r_id
+li.nested-fields[data-row="#{f.object.row}" data-col="#{f.object.col}" data-sizex="#{f.object.size_x}" data-sizey="#{f.object.size_y}"]
+  = f.input :row, as: :hidden, :input_html => { class: "data-row" }
+  = f.input :col, as: :hidden, :input_html => { class: "data-col" }
+  = f.input :size_x, as: :hidden, :input_html => { class: "data-sizex" }
+  = f.input :size_y, as: :hidden, :input_html => { class: "data-sizey" }
+  = f.input :picture, wrapper: :no_label, as: :image_preview
+  = link_to_remove_association "", f, { class: "fa fa-close btn-remove"}
+  a [class="btn btn-box-tool btn-more" data-toggle="modal" title="更多" data-target=".modal#_new_sub_grids_#{m_id}"]
+    i[class="fa fa-keyboard-o"]
+
+.modal.fade[id="_new_sub_grids_#{m_id}" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="grid_attrs"]
+  .modal-dialog[class="modal-md"]
+    .modal-content
+      .modal-header
+        | 設定標題與連結
+      .modal-body
+        = f.input :caption
+        = f.input :link
+      .modal-footer
+        button[class="btn btn-default" data-dismiss="modal" type="button"] 關閉

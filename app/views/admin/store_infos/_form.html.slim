@@ -1,0 +1,36 @@
+= simple_form_for [:admin, @storeInfo] do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_store_infos_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :caption
+        .col-xs-12.col-md-3.col-lg-3
+          = f.input :phone
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :address, input_html:{ id: "geocode"}, :placeholder => '請輸入地址'
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 簡介
+    .box-body.no-padding
+      = f.input :content, as: :ckeditor , wrapper: :bootstrap
+
+
+coffee:
+  #$(document).ready ->
+  #  autocomplete = new google.maps.places.Autocomplete($('#geocode')[0]);
+  #$(document).bind 'page:change', ->
+  #  $('.ckeditor:eq(1)').each ->
+  #    CKEDITOR.replace $(this).attr('id'),
+  #      language: 'zh'
+  #      autoGrow_onStartup: false
+  #      extraPlugins: 'autogrow,smiley'
+  #    return
+  #  return

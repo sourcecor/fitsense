@@ -1,0 +1,21 @@
+- m_id = r_id
+.nested-fields.col-xs-12.col-md-2.col-lg-2[id="f_new_sub_banners_ #{m_id}" style="height:96px"]
+  = f.input :id, as: :hidden, :input_html => { :data => {:id => "f_new_sub_banners_ #{m_id}"} }
+  = f.input :seq, as: :hidden, :input_html => { :data => {:seq => "f_new_sub_banners_ #{m_id}"} }
+  = f.input :picture, wrapper: :no_label, as: :image_preview
+  = link_to_remove_association "", f, { class: "fa fa-close btn-remove"}
+  a [class="btn btn-box-tool btn-more" data-toggle="modal" title="更多" data-target=".modal#_new_sub_banners_#{m_id}"]
+    i[class="fa fa-keyboard-o"]
+
+.modal.fade[id="_new_sub_banners_#{m_id}" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="banner_attrs"]
+  .modal-dialog[class="modal-md"]
+    .modal-content
+      .modal-header
+        | 設定標題與連結
+      .modal-body
+        = f.input :caption
+        = f.input :link
+      .modal-footer
+        button[class="btn btn-default" data-dismiss="modal" type="button"] 關閉
+coffee:
+  initImageInput();

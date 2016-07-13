@@ -1,0 +1,76 @@
+doctype html
+html
+  head
+    meta[charset="utf-8"]
+    meta[http-equiv="X-UA-Compatible" content="IE=edge"]
+    title
+      | 後台管理系統
+    = csrf_meta_tags
+    = stylesheet_link_tag 'admin/application', :media => 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'admin/application', 'data-turbolinks-track' => true
+    meta[content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"]
+    link[href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous"]
+    link[rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"]
+    /[if lt IE 9]
+      script[src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"]
+      script[src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"]
+
+  body.hold-transition.skin-yellow-light.fixed.sidebar-mini
+    .wrapper
+      /! Main Header
+      header.main-header
+        /! Logo
+        a.logo[href="/admin"]
+          span.logo-mini = ENV['LOGO_MINI'].html_safe.force_encoding("UTF-8")
+          span.logo-lg = ENV['LOGO_LG'].html_safe.force_encoding("UTF-8")
+        /! Header Navbar
+        nav.navbar.navbar-static-top[role="navigation"]
+          /! Sidebar toggle button
+          a.sidebar-toggle[href="#" data-toggle="offcanvas" role="button"]
+            span.sr-only
+              | Toggle navigation
+          /! Navbar Right Menu
+          = render "admin/layouts_partial/navbar_right_menu"
+
+      /! Left side column. contains the logo and sidebar
+      aside.main-sidebar
+        /!-- sidebar: style can be found in sidebar.less
+        section.sidebar
+          /!-- Sidebar user panel (optional)
+          = render "admin/layouts_partial/user_panel"
+
+          /! search form (Optional)
+          = render "admin/layouts_partial/search_form"
+
+          /! Sidebar Menu
+          = render "admin/layouts_partial/menu_sidebar"
+
+      /! Content Wrapper. Contains page content
+      .content-wrapper
+        /! Content Header (Page header)
+        section.content-header
+          h1
+            = yield :page_header
+            small = yield :sub_header
+          ol.breadcrumb
+            li
+              a[href="#"]
+                i.fa.fa-dashboard
+                | Level
+            li.active
+            | Here
+
+        /! Main content
+        section.content
+          == yield
+
+      /! Main Footer
+      = render "admin/layouts_partial/footer"
+      /!-- Control Sidebar
+      = render "admin/layouts_partial/control_sidebar"
+
+      = render "admin/supervisors/change_password"
+      /!-- Optionally, you can add Slimscroll and FastClick plugins.
+       Both of these plugins are recommended to enhance the
+       user experience. Slimscroll is required when using the
+       fixed layout.

@@ -1,0 +1,14 @@
+.row
+  .col-xs-12
+    .box
+      .box-header
+        .box-title
+          = yield :title
+        .box-tools
+          = yield :tools
+      = yield :body
+
+coffee:
+  $ ->
+    $(".wice-grid-container").addClass('box-body no-padding')
+    return

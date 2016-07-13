@@ -1,0 +1,136 @@
+= simple_form_for [:admin, @home_grid], html: { multipart: true } do |f|
+  = extends "admin/layouts_partial/_box_form" do
+    = content_for :title do
+      = title
+    = content_for :body do
+      = content_for :tools do
+        = f.button :submit, class: "btn-sm", style: "margin-right: 5px"
+        = link_to( '取消', admin_home_grids_path, class: "btn btn-warning btn-sm")
+      = f.input :id, as: :hidden
+      .row
+        .col-xs-12.col-md-4.col-lg-4
+          = f.input :caption
+        .col-xs-12.col-md-6.col-lg-6
+          = f.input :link
+        .col-xs-12.col-md-2.col-lg-2
+          = f.input :template_id, collection: {"1(4)-2-1(2)" => 1, "1(2)-2-1(4)" => 2, "2-1(4)-1(2)" => 3, "1-1(4)-1" => 4, "8" => 5, "4" => 6}, :include_blank => "(選取範本)"
+    /= content_for :footer
+  .box
+    .box-header.with-border
+      h3.box-title
+        | 內容
+      .box-tools
+        = link_to_add_association '新增', f, :sub_grids, partial: 'cell_fields', class: "btn btn-success btn-sm", \
+        "data-association-insertion-node" => '.gridster ul', "data-association-insertion-method" => :prepend, style: "display:none"
+    .box-body
+      .gridster
+        ul
+          = f.simple_fields_for :sub_grids do |item|
+            = render 'cell_fields', :f => item
+
+coffee:
+  update_cell_attr = (cell)->
+    for item in gridster.serialize()
+      v = $("li[data-row=#{item.row}][data-col=#{item.col}]")
+      v.find('input[class*=data-row]').val(item.row)
+      v.find('input[class*=data-col]').val(item.col)
+      v.find('input[class*=data-sizex]').val(item.size_x)
+      v.find('input[class*=data-sizey]').val(item.size_y)
+
+  gridster = $(".gridster > ul").gridster
+    min_cols: 8,
+    widget_margins: [10, 10],
+    widget_base_dimensions: [140, 120],
+    draggable: {
+      stop: (e, ui) ->
+        update_cell_attr ui
+    },
+    resize: {
+      #enabled: true,
+      max_size: [8, 8],
+      stop: (e, ui) ->
+        update_cell_attr ui
+    }
+  .data('gridster')
+  .disable();
+
+  btn_remove = ->
+    $(".gridster").find(".btn-remove").each ->
+      $(this).unbind();
+      $(this).click ->
+        #gridster.remove_widget($(this).parent());
+        $(this).parent().css('display','none');
+        return
+      return
+    return
+
+  btn_remove();
+
+  $('.gridster').on 'cocoon:before-insert', (e, insertedItem) ->
+    if typeof window.template == 'undefined'
+      gridster.add_widget(insertedItem[0], 2, 2);
+    else
+      gridster.add_widget(insertedItem[0], window.template[0], window.template[1], window.template[2], window.template[3]);
+    btn_remove();
+    initImageInput();
+    return
+
+  $('.gridster').on 'cocoon:after-insert', (e, insertedItem) ->
+    update_cell_attr insertedItem[0]
+    #$(insertedItem[1]).modal()
+    #$(".#{id}").modal('show')
+    return
+
+  clear_all_widgets = ->
+    $(".gridster").find(".btn-remove").each ->
+      $(this).click();
+    return
+
+  $templates = {
+    # 1(4)-2-1(2)
+    1: [
+      [4, 4, 1, 1],
+      [2, 2, 5, 1],
+      [2, 2, 5, 3],
+      [2, 4, 7, 1]
+    ],
+    # 1(2)-2-1(4)
+    2: [
+      [2, 4, 1, 1],
+      [2, 2, 3, 1],
+      [2, 2, 3, 3],
+      [4, 4, 5, 1]
+    ],
+    3: [
+      [2, 2, 1, 1],
+      [2, 2, 1, 3],
+      [4, 4, 3, 1],
+      [2, 4, 7, 1]
+    ],
+    4: [
+      [2, 4, 1, 1],
+      [4, 4, 3, 1],
+      [2, 4, 7, 1]
+    ],
+    5: [
+      [2, 2, 1, 1],
+      [2, 2, 3, 1],
+      [2, 2, 5, 1],
+      [2, 2, 7, 1],
+      [2, 2, 1, 3],
+      [2, 2, 3, 3],
+      [2, 2, 5, 3],
+      [2, 2, 7, 3],
+    ],
+    6: [
+      [2, 2, 1, 1],
+      [2, 2, 3, 1],
+      [2, 2, 5, 1],
+      [2, 2, 7, 1]
+    ],
+  }
+  $('#home_grid_template_id').change (e) ->
+    clear_all_widgets();
+    for item in $templates[this.selectedIndex]
+      window.template = item
+      $('a.add_fields').click();

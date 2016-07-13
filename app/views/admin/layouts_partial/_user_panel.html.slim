@@ -1,0 +1,10 @@
+.user-panel
+  .pull-left.image
+    = image_tag("logo.jpg", class: "img-circle", alt: "User Image")
+  .pull-left.info
+    p
+      = current_admin_supervisor.nickname
+    /! Status
+    a[href="#"]
+      i.fa.fa-circle.text-success
+      | Online

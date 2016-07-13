@@ -1,0 +1,19 @@
+/ 標題
+= content_for :page_header
+  | 選單維護
+/ 次標題
+= content_for :sub_header
+  | 說明
+
+= extends "admin/layouts_partial/_box_grid" do
+  = content_for :tools do
+    - link_to('新增', new_admin_menu_path, class: 'btn btn-primary btn-sm',)
+  = content_for :body do
+    == grid(@menus_grid) do |g|
+      - g.column name: '標題', attribute: 'caption', filter: false
+      - g.column name: '子選單' do | menu |
+        - menu.sub_menu_group.collect{| menu | menu[0] }.to_sentence(:two_words_connector => ' , ')
+      - g.column name: '操作' do | menu |
+        - content_tag(:div) do
+          - concat(link_to('修改', edit_admin_menu_path(menu), class: 'btn btn-default btn-xs', style: 'margin-right:5px'))
+          - concat(link_to('刪除', [:admin, menu] ,method: :delete, data: {confirm: '確定要刪除?'}, class: 'btn btn-danger btn-xs'))

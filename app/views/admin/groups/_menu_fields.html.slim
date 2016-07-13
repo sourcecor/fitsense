@@ -1,0 +1,5 @@
+label[style="margin:0px 5px" ]
+  = check_box_tag("group[menu_ids][]", f.id, @group.menus.include?(f))
+  = f.caption
+- f.sub_menus.each do |menu|
+  = render 'menu_fields', f: menu

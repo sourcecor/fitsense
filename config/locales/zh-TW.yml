@@ -1,0 +1,87 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+zh-TW:
+  recaptcha:
+    errors:
+      verification_failed: '圖形驗證錯誤'
+      recaptcha_unreachable: '圖形驗證逾時'
+      incorrect-captcha-sol: 'Fail'
+  activerecord:
+    attributes:
+      event:
+        email: "電子郵件"
+        name: "活動名稱"
+        description: "描述"
+      category:
+        caption: "類別名稱"
+        description: "描述"
+        seq: "排序"
+      menu:
+        caption: "名稱"
+        action: "路由"
+        icon: "圖示"
+        seq: "排序"
+      product:
+        caption: "品名"
+        sub_caption: "副標"
+        itemcode: "貨號"
+        description: "說明"
+        unit_price: "單價"
+        sale_price: "售價"
+        cost: "成本"
+        categories: "分類"
+      sub_product_color:
+        color_pic: "色票"
+        color: "色名"
+      sub_product:
+        itemcode: "貨號"
+        size: "尺寸"
+        color: "顏色"
+        qty: "數量"
+      store_info:
+        caption: "店名"
+        phone: "電話"
+        address: "地址"
+      supervisor:
+        nickname: "姓名"
+        current_password: "目前密碼"
+        email: "登入信箱"
+        password: "密碼"
+        password_confirmation: "密碼確認"
+      group:
+        caption: "群組名稱"
+      home_grid:
+        caption: "標題"
+        link: "連結"
+        picture: "圖片"
+        template_id: "範本"
+      banner:
+        caption: "標題"
+        description: "說明"
+        link: "連結"
+        seq: "排序"
+        picture: "圖片"
+  date:
+    order:
+      - :year
+      - :month
+      - :day

@@ -1,0 +1,15 @@
+- m_id = r_id
+.nested-fields[id="f_new_sub_products_ #{m_id}" style="height: 40px"]
+  .row[style ="height: 40px"]
+    = f.input :id, as: :hidden, :input_html => { :data => {:id => "f_new_sub_products_ #{m_id}"} }
+    = f.input :seq, as: :hidden, :input_html => { :data => {:seq => "f_new_sub_products_ #{m_id}"} }
+    .col-xs-12.col-md-3.col-lg-3[style ="height: 40px"]
+      = f.input :itemcode
+    .col-xs-12.col-md-3.col-lg-3[style ="height: 40px"]
+      = f.input :size
+    .col-xs-12.col-md-3.col-lg-3[style ="height: 40px"]
+      = f.input :color
+    .col-xs-12.col-md-2.col-lg-2[style ="height: 40px"]
+      = f.input :qty
+    .col-xs-12.col-md-1.col-lg-1[style ="height: 40px"]
+      = link_to_remove_association "移除", f, { class: "btn btn-danger btn-sm", style: "margin-top: 2px;"}

@@ -1,0 +1,21 @@
+/ 標題
+= content_for :page_header
+  | 選單功能維護
+/ 次標題
+= content_for :sub_header
+  | 說明
+
+= extends "admin/layouts_partial/_box_grid" do
+  = content_for :tools do
+    - link_to('新增', new_admin_group_path, class: 'btn btn-primary btn-sm',)
+  = content_for :body do
+    == grid(@groups_grid) do |g|
+      - g.column name: '群組', attribute: 'caption', filter: false
+      - g.column name: '成員' do | group |
+        - group.supervisors.collect{| supervisor | supervisor.nickname }.to_sentence(:two_words_connector => ' , ')
+      - g.column name: '選單' do | group |
+        - group.menus.collect{| menu | menu.caption }.to_sentence(:two_words_connector => ' , ')
+      - g.column name: '操作' do | group |
+        - content_tag(:div) do
+          - concat(link_to('修改', edit_admin_group_path(group), class: 'btn btn-default btn-xs', style: 'margin-right:5px'))
+          - concat(link_to('刪除', [:admin, group] ,method: :delete, data: {confirm: '確定要刪除?'}, class: 'btn btn-danger btn-xs'))
